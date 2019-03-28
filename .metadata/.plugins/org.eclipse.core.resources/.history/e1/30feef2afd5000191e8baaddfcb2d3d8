@@ -1,0 +1,9 @@
+package cliente;
+
+public class Digest {
+
+	public Digest() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

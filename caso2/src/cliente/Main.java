@@ -1,6 +1,9 @@
 package cliente;
 
 import java.io.BufferedReader;
+import java.io.BufferedReader;
+
+import java.io.InputStreamReader;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
@@ -43,6 +46,29 @@ public class Main {
 			System.out.println(desc);
 			long f=System.nanoTime();
 			System.out.println((f-i)+" nanosegundos de ejecucion");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		// main de digest
+		BufferedReader bf= new BufferedReader(new InputStreamReader(System.in));
+		try {
+			System.out.println("Ingrese el texto a digerir");
+			String input=bf.readLine();
+			System.out.println("El teto ingresado es: "+input);
+			long tInicial=System.nanoTime();
+			byte[] textoClaro=input.getBytes();
+			byte[] digerido=Digest.getDigest("MD5", textoClaro);
+			System.out.println(digerido.length+"");
+			Digest.imprimirHexa(digerido);
+			System.out.println("Ingrese el texto a verificar");
+			input=bf.readLine();
+			//input= toLowerCase(input);
+			byte[] ver=input.getBytes();
+			//if(verificar(digerido, ver))System.out.println("Coinciden"); else System.out.println("No coinciden");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
