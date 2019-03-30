@@ -14,6 +14,8 @@ import javax.crypto.SecretKey;
 public class Main {
 	private final static String ALGORITMO="AES";
 	
+	
+	
 	public static void imprimir(byte[] contenido){
 		int i=0;
 		for(;i<contenido.length-1;i++){
@@ -23,6 +25,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args){
+		
 		long i=System.nanoTime();
 		Scanner sc= new Scanner(System.in);
 		System.out.println("Excriba el texto que desea cifrar:");
