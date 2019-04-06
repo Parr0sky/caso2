@@ -61,4 +61,14 @@ try {
 		return cert;
 	}
 
+	public X509Certificate getCertificado() {
+		return certificado;
+	}
+	
+	public KeyPair getKeyPair() {
+		return keyPair;
+	}
+
+	
+
 }
