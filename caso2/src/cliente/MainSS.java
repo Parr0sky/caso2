@@ -11,29 +11,25 @@ public class MainSS {
 	
 	public final static String[] commands={"HOLA","ALGORITMOS","OK","ERROR"};
 	public final static String separador=":";
-	public final static String[] ALGs={"AES","Blowfish"};
+	public final static String ALGs="AES";
 	public final static String ALGa="RSA";
-	public final static String[] ALGhmac={"HMACSHA1","HMACSHA256","HMACSHA384","HMACSHA512"};
+	public final static String ALGhmac="HMACSHA1";
 	public static final String DIRECCION = "localhost";
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String[] comandosCliente=new String[7];
-		comandosCliente[0]="HOLA";
-		comandosCliente[1]="ALGORITMOS:AES:RSA:HMACSHA1";
-		comandosCliente[2]="Certificado del Cliente";
-		comandosCliente[3]="OK";
-		int iter=0;
 		
-		Socket socket = null;
-		Scanner sc = null;
+		Socket socket=null;
 		String strUsuario="";
-		
-
+		BufferedReader bf=null;
+		PrintWriter pw=null;
+		String strServidor="";
+		//coneccion de server y texto estandar
 		try
 		{
 			socket = new Socket(DIRECCION, 8080);
-			sc = new Scanner(System.in);
+			bf= new BufferedReader(new InputStreamReader(System.in));
+			pw=new PrintWriter(socket.getOutputStream(),true);
 		}
 		catch (Exception e)
 		{
@@ -41,19 +37,35 @@ public class MainSS {
 			System.exit(1);
 		}
 
-		while(true&&iter<7)
-		{
-			System.out.println("Excriba el comando:");
-			strUsuario=sc.nextLine();
+		for (int i = 0; i < 7; i++) {
+			System.out.println("Escriba el comando:");
+			try {
+				strUsuario=bf.readLine();
+				if(strUsuario!="" && strUsuario!=null){
+					if(strUsuario.equalsIgnoreCase(commands[0])) pw.println(commands[0]);
+					//envio algs
+					String algs=commands[1]+separador+ALGs+separador+ALGa+separador+ALGhmac;
+					pw.println(algs);
+					
+					//certificado del cliente
+					
+					
+					
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	
 					
 			
-		}
+		
 		System.out.println("Fin de la transacción");
 
 		// cierre el socket y la entrada estándar
 		try {
-			sc.close();
+			bf.close();
 			socket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

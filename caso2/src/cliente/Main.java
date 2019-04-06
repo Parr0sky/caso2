@@ -12,9 +12,13 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 public class Main {
-	private final static String ALGORITMO="AES";
 	
-	
+	public final static String[] commands={"HOLA","ALGORITMOS","OK","ERROR"};
+	public final static String separador=":";
+	public final static String[] ALGs={"AES","Blowfish"};
+	public final static String ALGa="RSA";
+	public final static String[] ALGhmac={"HMACSHA1","HMACSHA256","HMACSHA384","HMACSHA512"};
+	public static final String DIRECCION = "localhost";
 	
 	public static void imprimir(byte[] contenido){
 		int i=0;
@@ -36,17 +40,17 @@ public class Main {
 			byte[] arr=txt.getBytes();
 			System.out.print("Texto claro: ");
 			imprimir(arr);
-			kg = KeyGenerator.getInstance(ALGORITMO);
-			SecretKey sk=kg.generateKey();
-			byte[] cifrado=Simetrico.cifrar(sk, txt);
+			//kg = KeyGenerator.getInstance(ALGORITMO);
+			//SecretKey sk=kg.generateKey();
+			//byte[] cifrado=Simetrico.cifrar(sk, txt);
 			System.out.print("Texto cifrado: ");
-			imprimir(cifrado);
-			byte[] descifrado=Simetrico.descifrar(sk, cifrado);
+			//imprimir(cifrado);
+			//byte[] descifrado=Simetrico.descifrar(sk, cifrado);
 			System.out.print("Texto descifrado: ");
-			imprimir(descifrado);
-			String desc=new String(descifrado);
+			//imprimir(descifrado);
+			//String desc=new String(descifrado);
 			System.out.print("Texto descifrado: ");
-			System.out.println(desc);
+			//System.out.println(desc);
 			long f=System.nanoTime();
 			System.out.println((f-i)+" nanosegundos de ejecucion");
 		} catch (Exception e) {
