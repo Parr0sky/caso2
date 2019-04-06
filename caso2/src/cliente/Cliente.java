@@ -22,9 +22,18 @@ import org.bouncycastle.x509.X509V1CertificateGenerator;
 
 public class Cliente {
 	
-	public Cliente() {
+	private KeyPair keyPair;
+	private X509Certificate certificado;
+	
+	public Cliente(KeyPair pLlave) {
 		// TODO Auto-generated constructor stub
-
+keyPair=pLlave;
+try {
+	certificado=generarCertificado(keyPair);
+} catch (Exception e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+}
 	}
 
 	public static X509Certificate generarCertificado(KeyPair keyPair) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException, ParseException {
