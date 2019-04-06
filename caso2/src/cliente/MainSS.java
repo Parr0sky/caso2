@@ -1,10 +1,25 @@
 package cliente;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SignatureException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.text.ParseException;
 import java.util.Scanner;
 
 public class MainSS {
@@ -16,19 +31,24 @@ public class MainSS {
 	public final static String ALGhmac="HMACSHA1";
 	public static final String DIRECCION = "localhost";
 
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
+		Cliente cliente=new Cliente();
 		Socket socket=null;
 		String strUsuario="";
 		BufferedReader bf=null;
+		BufferedReader lector = null;
 		PrintWriter pw=null;
+		X509Certificate certServer = null;
 		String strServidor="";
+		PublicKey pk=null;
 		//coneccion de server y texto estandar
 		try
 		{
 			socket = new Socket(DIRECCION, 8080);
 			bf= new BufferedReader(new InputStreamReader(System.in));
+			lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			pw=new PrintWriter(socket.getOutputStream(),true);
 		}
 		catch (Exception e)
@@ -48,11 +68,31 @@ public class MainSS {
 					pw.println(algs);
 					
 					//certificado del cliente
+					KeyPairGenerator generator= KeyPairGenerator.getInstance(ALGa);
+					generator.initialize(1024);
+					KeyPair pair= generator.genKeyPair();
+					PublicKey publica= pair.getPublic();
+					PrivateKey privada=pair.getPrivate();
+					X509Certificate certCliente= cliente.generarCertificado(pair);
 					
-					
+					//envio certificado del cliente
+					byte[] certBytes=certCliente.getEncoded();
+					String certString= new String(certBytes);
+					pw.println(certString);
+					String certServerSTR;
+					if((strServidor = lector.readLine()) !=null){
+						certServerSTR=strServidor;
+						byte[] x509cert = certServerSTR.getBytes();
+						
+						CertificateFactory cf=CertificateFactory.getInstance("X.509");
+						InputStream in = new ByteArrayInputStream(x509cert);
+						certServer = (X509Certificate)cf.generateCertificate(in);
+						pk = certServer.getPublicKey();
+						
+					}
 					
 				}
-			} catch (IOException e) {
+			} catch (IOException | NoSuchAlgorithmException  | InvalidKeyException | IllegalStateException | NoSuchProviderException | SignatureException | ParseException | CertificateException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

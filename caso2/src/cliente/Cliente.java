@@ -27,7 +27,7 @@ public class Cliente {
 
 	}
 
-	private static X509Certificate generarCertificado(KeyPair keyPair) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException, ParseException {
+	public static X509Certificate generarCertificado(KeyPair keyPair) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException, ParseException {
 		SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
 		String strFechaIni = "30-03-2019 00:00:00"; 
 		String strFechaFin = "31-12-2019 23:59:59";
@@ -50,11 +50,6 @@ public class Cliente {
 		certGen.setSignatureAlgorithm("MD2withRSA");
 		X509Certificate cert = certGen.generate(keyPair.getPrivate());
 		return cert;
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
