@@ -9,6 +9,11 @@ import java.util.Scanner;
 
 public class MainSS {
 	
+	public final static String[] commands={"HOLA","ALGORITMOS","OK","ERROR"};
+	public final static String separador=":";
+	public final static String[] ALGs={"AES","Blowfish"};
+	public final static String ALGa="RSA";
+	public final static String[] ALGhmac={"HMACSHA1","HMACSHA256","HMACSHA384","HMACSHA512"};
 	public static final String DIRECCION = "localhost";
 
 	public static void main(String[] args) {
