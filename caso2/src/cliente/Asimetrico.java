@@ -35,4 +35,20 @@ public class Asimetrico {
 		}
 
 	}
+	
+	public static final String descifrarP(String txtOriginal, PublicKey llave) throws Exception {
+
+		byte[] txt=txtOriginal.getBytes();
+		try{
+			Cipher cifrador=Cipher.getInstance("RSA");
+			cifrador.init(Cipher.DECRYPT_MODE, llave);
+			byte[] txtClaro=cifrador.doFinal(txt);
+			return new String (txtClaro);
+
+		}catch(Exception e){
+			System.out.println("Excepcion: " + e.getMessage());
+			return null;
+		}
+
+	}
 }

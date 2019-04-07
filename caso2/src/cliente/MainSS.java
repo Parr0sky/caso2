@@ -37,7 +37,6 @@ public class MainSS {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		String datos1=15+separador[0]+"44 11.4561"+separador[1]+"13 10.5974";
-		String datos2=15+separador[0]+"32 15.8962"+separador[1]+"18 22.5641";
 		Cliente cliente=null;
 		Socket socket=null;
 		String strUsuario="";
@@ -73,12 +72,7 @@ public class MainSS {
 						pw.println(algs);
 						if((strServidor=lector.readLine())!= null && strServidor.equals(commands[2])){
 							//certificado del cliente
-							KeyPairGenerator generator= KeyPairGenerator.getInstance(ALGa);
-							generator.initialize(1024);
-							KeyPair pair= generator.genKeyPair();
-							PublicKey publica= pair.getPublic();
-							PrivateKey privada=pair.getPrivate();
-							cliente=new Cliente(pair);
+							cliente=new Cliente();
 							X509Certificate certCliente= cliente.getCertificado();
 
 							//envio certificado del cliente
@@ -101,12 +95,11 @@ public class MainSS {
 								pw.println(palabra);
 								
 								//recibir 128 bytes
-								byte[] recibidos =new byte[128];
 								if((strServidor=lector.readLine())!=null){
 									if(strServidor.getBytes().length==128) {
 										pw.println(commands[2]);
 										pw.println(datos1);
-										pw.println(datos2);
+										pw.println(datos1);
 										if((strServidor=lector.readLine())!= null && strServidor.equals(commands[2])){
 											System.out.println("Fin de la transacción");
 										}
@@ -124,7 +117,7 @@ public class MainSS {
 					}
 
 				}
-			} catch (IOException | NoSuchAlgorithmException   | IllegalStateException  | CertificateException e) {
+			} catch (IOException    | IllegalStateException  | CertificateException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

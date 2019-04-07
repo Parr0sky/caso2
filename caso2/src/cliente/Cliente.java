@@ -6,8 +6,10 @@ package cliente;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -16,27 +18,31 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.bouncycastle.jce.X509Principal;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.x509.X509V1CertificateGenerator;
 
 
 
 public class Cliente {
-	
+
 	private KeyPair keyPair;
 	private X509Certificate certificado;
-	
-	public Cliente(KeyPair pLlave) {
+
+	public Cliente() {
 		// TODO Auto-generated constructor stub
-keyPair=pLlave;
-try {
-	certificado=generarCertificado(keyPair);
-} catch (Exception e) {
-	// TODO Auto-generated catch block
-	e.printStackTrace();
-}
+
+		try {
+			KeyPairGenerator rsa = KeyPairGenerator.getInstance("RSA", new BouncyCastleProvider());
+			rsa.initialize(1024,new SecureRandom());
+			KeyPair keyPair = rsa.generateKeyPair();
+			certificado=generarCertificado(keyPair);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	public static X509Certificate generarCertificado(KeyPair keyPair) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException, ParseException {
+	private static X509Certificate generarCertificado(KeyPair keyPair) throws Exception {
 		SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
 		String strFechaIni = "30-03-2019 00:00:00"; 
 		String strFechaFin = "31-12-2019 23:59:59";
@@ -64,11 +70,11 @@ try {
 	public X509Certificate getCertificado() {
 		return certificado;
 	}
-	
+
 	public KeyPair getKeyPair() {
 		return keyPair;
 	}
 
-	
+
 
 }
