@@ -22,10 +22,12 @@ import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Scanner;
 
+import javax.xml.bind.DatatypeConverter;
+
 public class MainSS {
-	
+
 	public final static String[] commands={"HOLA","ALGORITMOS","OK","ERROR"};
-	public final static String separador=":";
+	public final static String[] separador={";", ","};
 	public final static String ALGs="AES";
 	public final static String ALGa="RSA";
 	public final static String ALGhmac="HMACSHA1";
@@ -34,7 +36,9 @@ public class MainSS {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Cliente cliente=new Cliente();
+		String datos1=15+separador[0]+"44 11.4561"+separador[1]+"13 10.5974";
+		String datos2=15+separador[0]+"32 15.8962"+separador[1]+"18 22.5641";
+		Cliente cliente=null;
 		Socket socket=null;
 		String strUsuario="";
 		BufferedReader bf=null;
@@ -57,51 +61,79 @@ public class MainSS {
 			System.exit(1);
 		}
 
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 2; i++) {
 			System.out.println("Escriba el comando:");
 			try {
 				strUsuario=bf.readLine();
 				if(strUsuario!="" && strUsuario!=null){
 					if(strUsuario.equalsIgnoreCase(commands[0])) pw.println(commands[0]);
-					//envio algs
-					String algs=commands[1]+separador+ALGs+separador+ALGa+separador+ALGhmac;
-					pw.println(algs);
-					
-					//certificado del cliente
-					KeyPairGenerator generator= KeyPairGenerator.getInstance(ALGa);
-					generator.initialize(1024);
-					KeyPair pair= generator.genKeyPair();
-					PublicKey publica= pair.getPublic();
-					PrivateKey privada=pair.getPrivate();
-					X509Certificate certCliente= cliente.generarCertificado(pair);
-					
-					//envio certificado del cliente
-					byte[] certBytes=certCliente.getEncoded();
-					String certString= new String(certBytes);
-					pw.println(certString);
-					String certServerSTR;
-					if((strServidor = lector.readLine()) !=null){
-						certServerSTR=strServidor;
-						byte[] x509cert = certServerSTR.getBytes();
-						
-						CertificateFactory cf=CertificateFactory.getInstance("X.509");
-						InputStream in = new ByteArrayInputStream(x509cert);
-						certServer = (X509Certificate)cf.generateCertificate(in);
-						pk = certServer.getPublicKey();
-						
+					if((strServidor=lector.readLine())!= null && strServidor.equals(commands[2])){
+						//envio algs
+						String algs=commands[1]+separador+ALGs+separador+ALGa+separador+ALGhmac;
+						pw.println(algs);
+						if((strServidor=lector.readLine())!= null && strServidor.equals(commands[2])){
+							//certificado del cliente
+							KeyPairGenerator generator= KeyPairGenerator.getInstance(ALGa);
+							generator.initialize(1024);
+							KeyPair pair= generator.genKeyPair();
+							PublicKey publica= pair.getPublic();
+							PrivateKey privada=pair.getPrivate();
+							cliente=new Cliente(pair);
+							X509Certificate certCliente= cliente.getCertificado();
+
+							//envio certificado del cliente
+							byte[] certBytes=certCliente.getEncoded();
+							String certString= DatatypeConverter.printHexBinary(certBytes);
+							pw.println(certString);
+							String certServerSTR;
+							if((strServidor = lector.readLine()) !=null){
+								//recepcion certificado del server
+								certServerSTR=strServidor;
+								byte[] x509cert = DatatypeConverter.parseHexBinary(certServerSTR);
+
+								CertificateFactory cf=CertificateFactory.getInstance("X.509");
+								InputStream in = new ByteArrayInputStream(x509cert);
+								certServer = (X509Certificate)cf.generateCertificate(in);
+								pk = certServer.getPublicKey();
+								//enviar 128 bytes
+								byte[] enviados=new byte[128];
+								String palabra= generate16bytes(enviados);
+								pw.println(palabra);
+								
+								//recibir 128 bytes
+								byte[] recibidos =new byte[128];
+								if((strServidor=lector.readLine())!=null){
+									if(strServidor.getBytes().length==128) {
+										pw.println(commands[2]);
+										pw.println(datos1);
+										pw.println(datos2);
+										if((strServidor=lector.readLine())!= null && strServidor.equals(commands[2])){
+											System.out.println("Fin de la transacción");
+										}
+										else if((strServidor=lector.readLine())!= null && strServidor.equals(commands[3])){
+											System.out.println("error en la transaccion");
+										}
+									}
+								}
+								
+							}
+						}
+						else if((strServidor=lector.readLine())!= null && strServidor.equals(commands[3])){
+							System.out.println("error en el envio de algoritmos");
+						}
 					}
-					
+
 				}
-			} catch (IOException | NoSuchAlgorithmException  | InvalidKeyException | IllegalStateException | NoSuchProviderException | SignatureException | ParseException | CertificateException e) {
+			} catch (IOException | NoSuchAlgorithmException   | IllegalStateException  | CertificateException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+
+
+
+
 	
-					
-			
-		
-		System.out.println("Fin de la transacción");
 
 		// cierre el socket y la entrada estándar
 		try {
@@ -112,6 +144,14 @@ public class MainSS {
 			e.printStackTrace();
 		}
 	}
-	
+	public static String generate16bytes(byte[] param){
+		String a="a";
+		String palabra=a;
+		for (byte b : param) {
+			b=(new Byte(a)).byteValue();
+			palabra+=a;
+		}
+		return palabra;
+	}
 
 }
