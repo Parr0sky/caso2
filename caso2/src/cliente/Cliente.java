@@ -34,7 +34,7 @@ public class Cliente {
 		try {
 			KeyPairGenerator rsa = KeyPairGenerator.getInstance("RSA", new BouncyCastleProvider());
 			rsa.initialize(1024,new SecureRandom());
-			KeyPair keyPair = rsa.generateKeyPair();
+			keyPair = rsa.generateKeyPair();
 			certificado=generarCertificado(keyPair);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

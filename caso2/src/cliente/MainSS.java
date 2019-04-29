@@ -28,6 +28,7 @@ public class MainSS {
 
 	public final static String[] commands={"HOLA","ALGORITMOS","OK","ERROR"};
 	public final static String[] separador={";", ","};
+	public final static String separadorAlgoritmo=":";
 	public final static String ALGs="AES";
 	public final static String ALGa="RSA";
 	public final static String ALGhmac="HMACSHA1";
@@ -60,7 +61,6 @@ public class MainSS {
 			System.exit(1);
 		}
 
-		for (int i = 0; i < 2; i++) {
 			System.out.println("Escriba el comando:");
 			try {
 				strUsuario=bf.readLine();
@@ -68,7 +68,7 @@ public class MainSS {
 					if(strUsuario.equalsIgnoreCase(commands[0])) pw.println(commands[0]);
 					if((strServidor=lector.readLine())!= null && strServidor.equals(commands[2])){
 						//envio algs
-						String algs=commands[1]+separador+ALGs+separador+ALGa+separador+ALGhmac;
+						String algs=commands[1]+separadorAlgoritmo+ALGs+separadorAlgoritmo+ALGa+separadorAlgoritmo+ALGhmac;
 						pw.println(algs);
 						if((strServidor=lector.readLine())!= null && strServidor.equals(commands[2])){
 							//certificado del cliente
@@ -121,7 +121,7 @@ public class MainSS {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		
 
 
 

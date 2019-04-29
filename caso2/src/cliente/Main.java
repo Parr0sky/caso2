@@ -20,10 +20,13 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.xml.bind.DatatypeConverter;
 
+import org.bouncycastle.util.encoders.Base64;
+
 public class Main {
 
 	public final static String[] commands={"HOLA","ALGORITMOS","OK","ERROR"};
 	public final static String[] separador={";", ","};
+	public final static String separadorAlgoritmo=":";
 	public final static String ALGs="AES";
 	public final static String ALGa="RSA";
 	public final static String ALGhmac="HMACSHA1";
@@ -64,24 +67,23 @@ public class Main {
 			System.exit(1);
 		}
 
-		for (int i = 0; i < 2; i++) {
-			System.out.println("Escriba el comando:");
-			try {
-				strUsuario=bf.readLine();
-				if(strUsuario!="" && strUsuario!=null){
-					if(strUsuario.equalsIgnoreCase(commands[0]))
-					{
-						pw.println(commands[0]);
-						System.out.println(lector.readLine());
-						System.out.println("Escriba el comando");
-					}
-					if((strServidor=lector.readLine())!= null && strServidor.equals(commands[2])){
+
+		System.out.println("Escriba el comando:");
+		try {
+			strUsuario=bf.readLine();
+			if(strUsuario!="" && strUsuario!=null){
+				if(strUsuario.equalsIgnoreCase(commands[0]))
+				{
+					pw.println(commands[0]);
+					strServidor=lector.readLine();
+					System.out.println(strServidor);
+					System.out.println("Escriba el comando");
+					if(strServidor!= null && strServidor.equals(commands[2])){
 						//envio algs
-						String algs=commands[1]+separador+ALGs+separador+ALGa+separador+ALGhmac;
+						String algs=commands[1]+separadorAlgoritmo+ALGs+separadorAlgoritmo+ALGa+separadorAlgoritmo+ALGhmac;
 						pw.println(algs);
-						System.out.println("Envio algoritmos");
-						//System.out.println(lector.readLine());
-						if((strServidor=lector.readLine())!= null && strServidor.equals(commands[2])){
+						strServidor=lector.readLine();
+						if(strServidor!= null && strServidor.equals(commands[2])){
 							System.out.println(strServidor);
 							//certificado del cliente
 							cliente=new Cliente();
@@ -91,10 +93,8 @@ public class Main {
 							byte[] certBytes=certCliente.getEncoded();
 							String certString= DatatypeConverter.printHexBinary(certBytes);
 							pw.println(certString);
-							System.out.println("Certificado cliente");
 							String certServerSTR;
 							if((strServidor = lector.readLine()) !=null){
-								System.out.println(strServidor);
 								//recepcion certificado del server
 								certServerSTR=strServidor;
 								byte[] x509cert = DatatypeConverter.parseHexBinary(certServerSTR);
@@ -107,13 +107,13 @@ public class Main {
 								KeyGenerator kg;
 								kg = KeyGenerator.getInstance("AES");
 								SecretKey sk=kg.generateKey();
-								pw.println(Asimetrico.cifrar(certServer.getPublicKey(),DatatypeConverter.printHexBinary(sk.getEncoded())));
-								System.out.println("cifrado");
+								pw.println(Asimetrico.cifrar(certServer.getPublicKey(), Base64.toBase64String(sk.getEncoded())));
+								strServidor=lector.readLine();
+								System.out.println(strServidor);
 								//recibir 128 bytes
-								if((strServidor=lector.readLine())!=null){
+								if(strServidor!=null){
 									String des=Asimetrico.descifrar(strServidor, cliente.getKeyPair().getPrivate());
 									if(des.equals(DatatypeConverter.printHexBinary(sk.getEncoded()))) {
-										pw.println(commands[2]);
 										pw.println(Simetrico.cifrar(sk, datos1));
 										String sha=Digest.hMacSha1(datos1, sk);
 										pw.println(sha);
@@ -145,11 +145,13 @@ public class Main {
 					}
 
 				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 
 
 
